@@ -1,13 +1,23 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form, Input, Button, Checkbox } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { postLogin } from '../store/actions';
 const img = require("../assets/img/login-background.jpg");
 
 const Login = () => {
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
+  const dispatch = useDispatch();
+  const isLogin = useSelector((state) => state.isLogin);
+
+  console.log(isLogin, "<<< is login");
+  const onFinish = async (values) => {
+    const dataTosend = {
+        email: values.email,
+        password: values.password
+    }
+    await dispatch(postLogin(dataTosend));
+  }
 
   return (
     <div style={styles}>
@@ -20,10 +30,10 @@ const Login = () => {
         onFinish={onFinish}
         >
         <Form.Item
-            name="username"
+            name="email"
             rules={[{ required: true, message: 'Please input your Username!' }]}
         >
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+            <Input prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
         </Form.Item>
         <Form.Item
             name="password"
