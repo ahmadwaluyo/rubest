@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { lazy } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import './assets/css/loading.css';
+import 'antd/dist/antd.css';
 import './App.css';
 
+const Login = lazy(() => import('./Login/login'));
+const Layout = lazy(() => import('./containers/Layout'));
+
+const styles = {
+  display: "flex", 
+  flex: 1, 
+  width: "100vw", 
+  height: "100vh", 
+  justifyContent: "center", 
+  alignItems: "center"
+}
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const token = localStorage.getItem("token");
+  const state = {
+    isLogin: false,
+    token: token ? token : ""
+  }
+
+  if (state.token) {
+    state.isLogin = true
+  }
+
+  const loading = (
+    <div style={styles}>
+        <div className="lds-ripple"><div></div><div></div></div>
     </div>
-  );
+  )
+
+  return (
+    <BrowserRouter basename="/">
+        <React.Suspense fallback={loading}>
+          <Switch>
+              <Route exact path="/login" name="Login Page" render={props => <Login {...props} />} />
+              <Route path="/" name="Home" render={props => <Layout {...props} />} />
+          </Switch>
+        </React.Suspense> 
+    </BrowserRouter>
+  )
 }
 
 export default App;
